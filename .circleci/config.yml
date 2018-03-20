@@ -50,6 +50,7 @@ jobs:
             if [ "${CIRCLE_BRANCH}" == "master" ]; then
               docker login -u $DOCKER_USER -p $DOCKER_PASS
               docker tag app "cloudgenius/mautic-mingfang-docker:${CIRCLE_SHA1}"
-              #docker push "cloudgenius/mautic-mingfang-docker:${CIRCLE_SHA1}"
-              sh "bash -x ./push"
+              docker push "cloudgenius/mautic-mingfang-docker:${CIRCLE_SHA1}"
+              docker tag app "cloudgenius/mautic-mingfang-docker:latest"
+              docker push "cloudgenius/mautic-mingfang-docker:latest" 
             fi
