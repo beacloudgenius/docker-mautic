@@ -1,0 +1,54 @@
+version: 2
+jobs:
+  build:
+    working_directory: /app
+    docker:
+      - image: docker:stable-git
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --no-cache py-pip
+            pip install --upgrade pip
+            pip install docker-compose
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}
+          paths:
+            - /caches/app.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
+      - run:
+          name: Build Docker image
+          command: |
+            sh "./build --no-cache"
+            #docker build --cache-from=app -t app .
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/app.tar app
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ epoch }}
+          paths:
+            - /caches/app.tar
+      - run:
+          name: Run tests
+          command: |
+            echo "all tests pass!"
+            #docker-compose -f ./docker-compose.test.yml up
+      - deploy:
+          name: Push Docker image
+          context: dockerhub
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              docker login -u $DOCKER_USER -p $DOCKER_PASS
+              docker tag app "cloudgenius/mautic-mingfang-docker:${CIRCLE_SHA1}"
+              #docker push "cloudgenius/mautic-mingfang-docker:${CIRCLE_SHA1}"
+              sh "bash -x ./push"
+            fi
