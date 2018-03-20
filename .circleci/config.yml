@@ -26,7 +26,8 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            ./build 
+            #source helper
+            docker build --pull --build-arg http_proxy="$http_proxy" --build-arg https_proxy="$https_proxy" --cache-from=app -t app . 
             #docker build --cache-from=app -t app .
       - run:
           name: Save Docker image layer cache
