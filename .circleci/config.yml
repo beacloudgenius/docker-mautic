@@ -26,7 +26,7 @@ jobs:
       - run:
           name: Build Docker image
           command: |
-            sh "./build --no-cache"
+            ./build 
             #docker build --cache-from=app -t app .
       - run:
           name: Save Docker image layer cache
