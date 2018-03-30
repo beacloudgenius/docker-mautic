@@ -1,0 +1,73 @@
+php.ini
+
+date.timezone = "America/Los_Angeles"
+
+working build
+
+docker build -t cloudgenius/mautic-mingfang-docker .
+docker tag cloudgenius/mautic-mingfang-docker app
+
+
+working run
+
+docker run -d -p 80:80 -v /Users/cloudgenius/btsync/Projects/sos/mautic-mingfang-docker/local:/www/html/app/local  app
+
+misc
+
+
+run
+docker run -d -t app
+
+shell
+docker run -p 80:80 --rm -v `pwd`:/docker -it app bash
+
+
+
+
+
+
+
+RUN apt-get update && \
+	apt-get install -y  --no-install-recommends ssl-cert && \
+	rm -r /var/lib/apt/lists/* && \
+	a2enmod ssl && \
+	a2ensite default-ssl
+
+
+
+
+tar xjf latest.tcsmautic.tar.bz2 -C ./m
+docker-compose exec mautic bash
+cat tcsmautic.sql | mysql -h my -u root -p123 marketing
+
+
+
+
+
+
+
+
+# tcsmautic-1-clean.sh
+# tcsmautic-2-dump.sh
+# tcsmautic-3-bring.sh
+
+rm -rf mysql && mkdir -p mysql
+
+# tar xjf ../staging-tcsmautic/hold/latest.tcsmautic.tar.bz2 -C ../staging-tcsmautic/mautic
+
+
+docker rm -f $(docker ps -aq)
+docker-compose up --build -d
+#sleep 60
+
+docker-compose exec mautic bash
+      cat tcsmautic.sql     | mysql -h sqlproxy-gcloud-sqlproxy -u root -pszstpq13 tcsmautic
+firefox https://yourfriendsat.thecloudseminar.com
+
+
+rm -rf ./mautic/app/cache/prod
+rm -rf ./mautic/app/cache/ip_data/Ge*
+rm -rf ./mautic/app/logs/*log
+
+#rm -rf   ../staging-tcsmautic/mautic ../staging-tcsmautic/mysql ../staging-tcsmautic/hold
+#mkdir -p ../staging-tcsmautic/mautic ../staging-tcsmautic/mysql ../staging-tcsmautic/hold

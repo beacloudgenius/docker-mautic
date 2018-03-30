@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+
+  mautic:
+    build:
+      context: .
+    ports:
+      - '80:80'
+      - '443:443'
+    networks:
+      - testnet
+    volumes:
+      - ./hold:/hold
+      - ./local:/var/www/html/app/local/
+      - ./mauticlogs:/var/log/mautic/
+      - ./nginxlogs:/var/log/nginx/
+    working_dir: /var/www/html
+    environment:
+      - MAUTIC_DB_HOST=my
+      - MAUTIC_DB_PASSWORD=123
+#      - MYSQL_PORT_3306_TCP=3306
+
+  my:
+    image: mysql:5.7.14
+    ports:
+      - '3306:3306'
+    networks:
+      - testnet
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+#      - MYSQL_USER=root
+#      - MYSQL_PASSWORD=123
+      - MYSQL_DATABASE=marketing
+      - MYSQL_ROOT_PASSWORD=123
+
+networks:
+  testnet:

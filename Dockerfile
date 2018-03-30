@@ -35,7 +35,7 @@ FROM build AS final
 COPY --from=build /var/www/html /var/www/html
 RUN chown -R www-data:www-data /var/www/html
 
-#Put all Mautic instance config files into one directory    
+#Put all Mautic instance config files into one directory
 RUN cd /var/www/html/app  && \
     mkdir -p local/cache/prod local/config local/themes local/idp local/media/files local/media/images local/plugins
 COPY paths_local.php /var/www/html/app/config/
@@ -50,6 +50,11 @@ COPY crontab /
 COPY php.ini /etc/php/7.0/fpm/
 
 # Add runit services
-COPY sv /etc/service 
+COPY sv /etc/service
 ARG BUILD_INFO
 LABEL BUILD_INFO=$BUILD_INFO
+RUN apt install mysql-client -y
+
+RUN apt install -y ssl-cert && make-ssl-cert generate-default-snakeoil --force-overwrite
+
+EXPOSE 80 443
